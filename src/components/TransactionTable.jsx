@@ -1,96 +1,119 @@
 // src/components/TransactionTable.jsx
-import React from "react";
-
-const transactions = [
-  {
-    date: "July 18, 2024",
-    time: "9:00 AM",
-    title: "Groceries",
-    amount: 50,
-    category: "Food",
-  },
-  {
-    date: "July 18, 2024",
-    time: "1:00 PM",
-    title: "Salary",
-    amount: 1000,
-    category: "Income",
-  },
-  {
-    date: "July 17, 2024",
-    time: "2:00 PM",
-    title: "Rent",
-    amount: 500,
-    category: "Housing",
-  },
-  {
-    date: "July 17, 2024",
-    time: "5:00 PM",
-    title: "Freelance",
-    amount: 200,
-    category: "Income",
-  },
-];
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import moment from 'moment'; // Import moment
+import EditTransactionForm from './EditTransactionForm'; // Import the EditTransactionForm
 
 const TransactionTable = () => {
-  const handleEdit = (id) => {
-    // Implement edit logic here
-    console.log(`Edit transaction with id: ${id}`);
+  const [transactions, setTransactions] = useState([]);
+  const [error, setError] = useState("");
+  const [selectedTransaction, setSelectedTransaction] = useState(null); // State for the selected transaction
+  const [isEditing, setIsEditing] = useState(false); // State to control the visibility of the edit form
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/transactions");
+        setTransactions(response.data);
+      } catch (err) {
+        setError(`Failed to fetch transactions: ${err.message}`);
+        console.error("Fetch error:", err);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
+  // Extract unique dates and format them
+  const dates = Array.from(new Set(transactions.map((t) => moment(t.date).format('YYYY-MM-DD'))))
+    .sort((a, b) => moment(b).diff(moment(a))); // Sort dates in decreasing order
+
+  const handleEdit = (transaction) => {
+    setSelectedTransaction(transaction);
+    setIsEditing(true); // Show the edit form
   };
 
-  const handleDelete = (id) => {
-    // Implement delete logic here
-    console.log(`Delete transaction with id: ${id}`);
+  const handleSave = () => {
+    // Reload transactions after saving
+    setIsEditing(false);
+    setSelectedTransaction(null);
+    fetchTransactions(); // Ensure this function is defined
   };
 
-  const dates = Array.from(new Set(transactions.map((t) => t.date))); // Unique dates
+  const handleCancel = () => {
+    setIsEditing(false);
+    setSelectedTransaction(null);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/transactions/${id}`);
+      setTransactions(transactions.filter((transaction) => transaction._id !== id));
+    } catch (err) {
+      setError("Failed to delete transaction");
+      console.error(err);
+    }
+  };
 
   return (
     <div className="p-4 bg-gray-100 dark:bg-gray-900">
-      {dates.map((day) => (
-        <div key={day} className="mb-6">
-          <div className="font-bold text-xl mb-2 text-gray-900 dark:text-gray-100">
-            {day}
-          </div>
-          <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700">
-            <div className="grid grid-cols-5 gap-4 p-4 border-b font-semibold text-gray-900 dark:text-gray-100">
-              <div className="text-xs sm:text-sm md:text-base">Time</div>
-              <div className="text-xs sm:text-sm md:text-base">Title</div>
-              <div className="text-xs sm:text-sm md:text-base">Amount</div>
-              <div className="text-xs sm:text-sm md:text-base">Category</div>
-              <div className="text-xs sm:text-sm md:text-base">Actions</div> {/* Actions column */}
+      {error && <p className="text-red-500">{error}</p>}
+      {isEditing && selectedTransaction && (
+        <EditTransactionForm
+          transaction={selectedTransaction}
+          onSave={handleSave}
+          onCancel={handleCancel}
+        />
+      )}
+      {dates.length === 0 ? (
+        <p>No transactions found.</p>
+      ) : (
+        dates.map((day) => (
+          <div key={day} className="mb-6">
+            <div className="font-bold text-xl mb-2 text-gray-900 dark:text-gray-100">
+              {day}
             </div>
+            <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700">
+              <div className="grid grid-cols-5 gap-4 p-4 border-b font-semibold text-gray-900 dark:text-gray-100">
+                <div className="text-xs sm:text-sm md:text-base">Time</div>
+                <div className="text-xs sm:text-sm md:text-base">Title</div>
+                <div className="text-xs sm:text-sm md:text-base">Amount</div>
+                <div className="text-xs sm:text-sm md:text-base">Category</div>
+                <div className="text-xs sm:text-sm md:text-base">Actions</div>
+              </div>
 
-            {transactions
-              .filter((transaction) => transaction.date === day)
-              .map((transaction, index) => (
-                <div
-                  key={index}
-                  className="grid grid-cols-5 gap-4 p-4 border-b border-gray-300 dark:border-gray-700"
-                >
-                  <div className="text-sm sm:text-base dark:text-gray-100">{transaction.time}</div>
-                  <div className="text-sm sm:text-base dark:text-gray-100">{transaction.title}</div>
-                  <div className="text-sm sm:text-base dark:text-gray-100">${transaction.amount}</div>
-                  <div className="text-sm sm:text-base dark:text-gray-100">{transaction.category}</div>
-                  <div className="text-sm sm:text-xs dark:text-gray-100">
-                    <span
-                      onClick={() => handleEdit(transaction.id)}
-                      className="cursor-pointer text-blue-500 hover:underline"
-                    >
-                      Edit
-                    </span>
-                    <span
-                      onClick={() => handleDelete(transaction.id)}
-                      className="cursor-pointer text-red-500 hover:underline ml-1 pr-1"
-                    >
-                      Delete
-                    </span>
+              {transactions
+                .filter((transaction) => moment(transaction.date).format('YYYY-MM-DD') === day)
+                .sort((a, b) => moment(b.date).diff(moment(a.date))) // Sort transactions if needed
+                .map((transaction) => (
+                  <div
+                    key={transaction._id}
+                    className="grid grid-cols-5 gap-4 p-4 border-b border-gray-300 dark:border-gray-700"
+                  >
+                    <div className="text-sm sm:text-base dark:text-gray-100">{transaction.time}</div>
+                    <div className="text-sm sm:text-base dark:text-gray-100">{transaction.title}</div>
+                    <div className="text-sm sm:text-base dark:text-gray-100">₹{transaction.amount}</div>
+                    <div className="text-sm sm:text-base dark:text-gray-100">{transaction.category}</div>
+                    <div className="text-sm sm:text-xs dark:text-gray-100">
+                      <span
+                        onClick={() => handleEdit(transaction)}
+                        className="cursor-pointer text-blue-500 hover:underline"
+                      >
+                        Edit
+                      </span>
+                      <span
+                        onClick={() => handleDelete(transaction._id)}
+                        className="cursor-pointer text-red-500 hover:underline ml-1 pr-1"
+                      >
+                        Delete
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 };

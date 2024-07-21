@@ -29,18 +29,64 @@ const PieCharts = () => {
     ],
   };
 
+  // Calculate totals
+  const totalExpenses = expenseData.datasets[0].data.reduce((a, b) => a + b, 0);
+  const totalIncome = incomeData.datasets[0].data.reduce((a, b) => a + b, 0);
+
   return (
-    <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-8  bg-gray-100 dark:bg-gray-900">
-      <div className="flex justify-center items-center">
+    <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-8 bg-gray-100 dark:bg-gray-900">
+      <div className="flex flex-col justify-center items-center">
         <div className="w-full max-w-md">
           <h3 className="text-center font-bold mb-4 text-gray-900 dark:text-gray-100">Expense Breakdown</h3>
-          <Pie data={expenseData} options={{ responsive: true, maintainAspectRatio: true }} />
+          <Pie
+            data={expenseData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins: {
+                legend: {
+                  position: 'top',
+                },
+                tooltip: {
+                  callbacks: {
+                    label: (tooltipItem) => {
+                      return `${tooltipItem.label}: $${tooltipItem.raw}`;
+                    },
+                  },
+                },
+              },
+            }}
+          />
+          <div className="mt-4 text-gray-900 dark:text-gray-100">
+            <p className="text-lg text-center font-semibold">Total Expenses: ${totalExpenses}</p>
+          </div>
         </div>
       </div>
-      <div className="flex justify-center items-center">
+      <div className="flex flex-col justify-center items-center">
         <div className="w-full max-w-md">
           <h3 className="text-center font-bold mb-4 text-gray-900 dark:text-gray-100">Income Breakdown</h3>
-          <Pie data={incomeData} options={{ responsive: true, maintainAspectRatio: true }} />
+          <Pie
+            data={incomeData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins: {
+                legend: {
+                  position: 'top',
+                },
+                tooltip: {
+                  callbacks: {
+                    label: (tooltipItem) => {
+                      return `${tooltipItem.label}: $${tooltipItem.raw}`;
+                    },
+                  },
+                },
+              },
+            }}
+          />
+          <div className="mt-4 text-gray-900  dark:text-gray-100">
+            <p className="text-lg text-center font-semibold">Total Income: ${totalIncome}</p>
+          </div>
         </div>
       </div>
     </div>

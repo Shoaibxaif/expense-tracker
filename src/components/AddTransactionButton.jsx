@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import CustomDropdown from './Customdropdownn';
+import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import moment from 'moment'; // Make sure moment is imported
 
 const AddTransactionButton = () => {
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -21,17 +21,34 @@ const AddTransactionButton = () => {
     setFormType(type);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic
-    console.log({ date, amount, category, title, notes });
-    // Clear form and hide
-    setDate(new Date());
-    setAmount('');
-    setCategory('');
-    setTitle('');
-    setNotes('');
-    toggleFormVisibility();
+    try {
+      // Format date to YYYY-MM-DD
+      const formattedDate = moment(date).format('YYYY-MM-DD');
+
+      // Send data to the backend
+      const response = await axios.post('http://localhost:5000/api/transactions', {
+        date: formattedDate,
+        time: new Date().toLocaleTimeString(), // Assuming current time
+        title,
+        amount,
+        category,
+        notes,
+      });
+
+      console.log('Transaction added:', response.data);
+
+      // Clear form and hide
+      setDate(new Date());
+      setAmount('');
+      setCategory('');
+      setTitle('');
+      setNotes('');
+      toggleFormVisibility();
+    } catch (error) {
+      console.error('Error adding transaction:', error);
+    }
   };
 
   return (
