@@ -30,7 +30,7 @@ const PieCharts = () => {
   };
 
   return (
-    <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 bg-gray-100 dark:bg-gray-900">
+    <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-8  bg-gray-100 dark:bg-gray-900">
       <div className="flex justify-center items-center">
         <div className="w-full max-w-md">
           <h3 className="text-center font-bold mb-4 text-gray-900 dark:text-gray-100">Expense Breakdown</h3>

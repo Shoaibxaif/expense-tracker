@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
+import CustomDropdown from './Customdropdownn';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 
 const AddTransactionButton = () => {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [formType, setFormType] = useState('expense'); // 'expense' or 'income'
+  const [date, setDate] = useState(new Date());
+  const [amount, setAmount] = useState('');
+  const [category, setCategory] = useState('');
+  const [title, setTitle] = useState('');
+  const [notes, setNotes] = useState('');
 
   const toggleFormVisibility = () => {
     setIsFormVisible(!isFormVisible);
@@ -10,6 +19,19 @@ const AddTransactionButton = () => {
 
   const handleFormTypeChange = (type) => {
     setFormType(type);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic
+    console.log({ date, amount, category, title, notes });
+    // Clear form and hide
+    setDate(new Date());
+    setAmount('');
+    setCategory('');
+    setTitle('');
+    setNotes('');
+    toggleFormVisibility();
   };
 
   return (
@@ -43,27 +65,35 @@ const AddTransactionButton = () => {
             <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
               {formType.charAt(0).toUpperCase() + formType.slice(1)} Transaction
             </h2>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-gray-700 dark:text-gray-300 mb-2">Title</label>
-                <input
-                  type="text"
-                  placeholder="Transaction Title"
-                  className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded"
+                <label className="block text-gray-700 dark:text-gray-300 mb-2">Date</label>
+                <DatePicker
+                  selected={date}
+                  onChange={(date) => setDate(date)}
+                  className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                 />
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 dark:text-gray-300 mb-2">Amount</label>
                 <input
                   type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
                   placeholder="Amount"
-                  className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded"
+                  className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  required
                 />
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 dark:text-gray-300 mb-2">Category</label>
-                <select className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded">
-                  <option value="" disabled selected>Select Category</option>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  required
+                >
+                  <option value="" disabled>Select Category</option>
                   {formType === 'expense' ? (
                     <>
                       <option>Food</option>
@@ -80,6 +110,26 @@ const AddTransactionButton = () => {
                     </>
                   )}
                 </select>
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 dark:text-gray-300 mb-2">Title</label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Transaction Title"
+                  className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 dark:text-gray-300 mb-2">Notes</label>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Notes"
+                  className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                ></textarea>
               </div>
               <div className="flex justify-end">
                 <button
