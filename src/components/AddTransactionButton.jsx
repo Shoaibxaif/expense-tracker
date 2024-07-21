@@ -25,7 +25,7 @@ const AddTransactionButton = () => {
       {/* Form Container */}
       {isFormVisible && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-80">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-80 border border-white dark:border-white">
             <div className="mb-4">
               <button
                 onClick={() => handleFormTypeChange('expense')}
