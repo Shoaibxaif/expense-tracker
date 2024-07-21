@@ -13,7 +13,7 @@ const TransactionTable = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/transactions");
+        const response = await axios.get("https://expense-tracker-backend-eac1.onrender.com/api/transactions");
         setTransactions(response.data);
       } catch (err) {
         setError(`Failed to fetch transactions: ${err.message}`);
@@ -47,7 +47,7 @@ const TransactionTable = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/transactions/${id}`);
+      await axios.delete(`https://expense-tracker-backend-eac1.onrender.com/api/transactions/${id}`);
       setTransactions(transactions.filter((transaction) => transaction._id !== id));
     } catch (err) {
       setError("Failed to delete transaction");

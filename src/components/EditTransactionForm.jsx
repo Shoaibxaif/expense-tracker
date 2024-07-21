@@ -29,7 +29,7 @@ const EditTransactionForm = ({ transaction, onSave, onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/api/transactions/${transaction._id}`, formData);
+      await axios.put(`https://expense-tracker-backend-eac1.onrender.com/api/transactions/${transaction._id}`, formData);
       onSave();
     } catch (err) {
       console.error("Update error:", err);

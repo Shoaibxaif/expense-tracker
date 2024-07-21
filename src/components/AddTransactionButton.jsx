@@ -28,7 +28,7 @@ const AddTransactionButton = () => {
       const formattedDate = moment(date).format('YYYY-MM-DD');
 
       // Send data to the backend
-      const response = await axios.post('http://localhost:5000/api/transactions', {
+      const response = await axios.post('https://expense-tracker-backend-eac1.onrender.com/api/transactions', {
         date: formattedDate,
         time: new Date().toLocaleTimeString(), // Assuming current time
         title,
