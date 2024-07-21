@@ -57,14 +57,14 @@ const TransactionTable = () => {
                   key={index}
                   className="grid grid-cols-4 gap-4 p-4 border-b border-gray-300 dark:border-gray-700"
                 >
-                  <div className="text-sm sm:text-base">{transaction.time}</div>
-                  <div className="text-sm sm:text-base">
+                  <div className="text-sm sm:text-base dark:text-gray-100">{transaction.time}</div>
+                  <div className="text-sm sm:text-base dark:text-gray-100 ">
                     {transaction.title}
                   </div>
-                  <div className="text-sm sm:text-base">
+                  <div className="text-sm sm:text-base dark:text-gray-100">
                     ${transaction.amount}
                   </div>
-                  <div className="text-sm sm:text-base">
+                  <div className="text-sm sm:text-base dark:text-gray-100">
                     {transaction.category}
                   </div>
                 </div>

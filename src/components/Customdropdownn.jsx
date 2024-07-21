@@ -23,7 +23,7 @@ const Customdropdownn = ({ options, selected, onSelect, placeholder }) => {
         </svg>
       </button>
       {isOpen && (
-        <div className="absolute mt-2 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg z-10">
+        <div className="absolute mt-2 w-full dark:text-gray-100 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg z-10">
           {options.map((option) => (
             <div
               key={option}
