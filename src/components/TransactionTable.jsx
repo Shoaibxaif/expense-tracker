@@ -33,6 +33,16 @@ const transactions = [
 ];
 
 const TransactionTable = () => {
+  const handleEdit = (id) => {
+    // Implement edit logic here
+    console.log(`Edit transaction with id: ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    // Implement delete logic here
+    console.log(`Delete transaction with id: ${id}`);
+  };
+
   const dates = Array.from(new Set(transactions.map((t) => t.date))); // Unique dates
 
   return (
@@ -43,11 +53,12 @@ const TransactionTable = () => {
             {day}
           </div>
           <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700">
-            <div className="grid grid-cols-4 gap-4 p-4 border-b font-semibold text-gray-900 dark:text-gray-100">
+            <div className="grid grid-cols-5 gap-4 p-4 border-b font-semibold text-gray-900 dark:text-gray-100">
               <div className="text-xs sm:text-sm md:text-base">Time</div>
               <div className="text-xs sm:text-sm md:text-base">Title</div>
               <div className="text-xs sm:text-sm md:text-base">Amount</div>
               <div className="text-xs sm:text-sm md:text-base">Category</div>
+              <div className="text-xs sm:text-sm md:text-base">Actions</div> {/* Actions column */}
             </div>
 
             {transactions
@@ -55,17 +66,25 @@ const TransactionTable = () => {
               .map((transaction, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-4 gap-4 p-4 border-b border-gray-300 dark:border-gray-700"
+                  className="grid grid-cols-5 gap-4 p-4 border-b border-gray-300 dark:border-gray-700"
                 >
                   <div className="text-sm sm:text-base dark:text-gray-100">{transaction.time}</div>
-                  <div className="text-sm sm:text-base dark:text-gray-100 ">
-                    {transaction.title}
-                  </div>
-                  <div className="text-sm sm:text-base dark:text-gray-100">
-                    ${transaction.amount}
-                  </div>
-                  <div className="text-sm sm:text-base dark:text-gray-100">
-                    {transaction.category}
+                  <div className="text-sm sm:text-base dark:text-gray-100">{transaction.title}</div>
+                  <div className="text-sm sm:text-base dark:text-gray-100">${transaction.amount}</div>
+                  <div className="text-sm sm:text-base dark:text-gray-100">{transaction.category}</div>
+                  <div className="text-sm sm:text-xs dark:text-gray-100">
+                    <span
+                      onClick={() => handleEdit(transaction.id)}
+                      className="cursor-pointer text-blue-500 hover:underline"
+                    >
+                      Edit
+                    </span>
+                    <span
+                      onClick={() => handleDelete(transaction.id)}
+                      className="cursor-pointer text-red-500 hover:underline ml-1 pr-1"
+                    >
+                      Delete
+                    </span>
                   </div>
                 </div>
               ))}
