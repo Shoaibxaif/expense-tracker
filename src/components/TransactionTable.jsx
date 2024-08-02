@@ -22,7 +22,10 @@ const TransactionTable = () => {
     };
 
     fetchTransactions();
-  }, []);
+  }, [
+    // The dependency array is empty, so the effect will only run once when the component mounts
+    transactions
+  ]);
 
   // Extract unique dates and format them
   const dates = Array.from(new Set(transactions.map((t) => moment(t.date).format('YYYY-MM-DD'))))
