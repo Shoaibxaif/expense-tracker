@@ -1,14 +1,13 @@
-// src/components/TransactionTable.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import moment from 'moment'; // Import moment
-import EditTransactionForm from './EditTransactionForm'; // Import the EditTransactionForm
+import moment from 'moment';
+import EditTransactionForm from './EditTransactionForm';
 
-const TransactionTable = () => {
+const TransactionTable = ({ searchTerm }) => {
   const [transactions, setTransactions] = useState([]);
   const [error, setError] = useState("");
-  const [selectedTransaction, setSelectedTransaction] = useState(null); // State for the selected transaction
-  const [isEditing, setIsEditing] = useState(false); // State to control the visibility of the edit form
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -23,24 +22,25 @@ const TransactionTable = () => {
 
     fetchTransactions();
   }, [
-    // The dependency array is empty, so the effect will only run once when the component mounts
     transactions
   ]);
 
-  // Extract unique dates and format them
-  const dates = Array.from(new Set(transactions.map((t) => moment(t.date).format('YYYY-MM-DD'))))
-    .sort((a, b) => moment(b).diff(moment(a))); // Sort dates in decreasing order
+  const filteredTransactions = transactions.filter((transaction) =>
+    transaction.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const dates = Array.from(new Set(filteredTransactions.map((t) => moment(t.date).format('YYYY-MM-DD'))))
+    .sort((a, b) => moment(b).diff(moment(a)));
 
   const handleEdit = (transaction) => {
     setSelectedTransaction(transaction);
-    setIsEditing(true); // Show the edit form
+    setIsEditing(true);
   };
 
   const handleSave = () => {
-    // Reload transactions after saving
     setIsEditing(false);
     setSelectedTransaction(null);
-    fetchTransactions(); // Ensure this function is defined
+    fetchTransactions();
   };
 
   const handleCancel = () => {
@@ -85,9 +85,9 @@ const TransactionTable = () => {
                 <div className="text-xs sm:text-sm md:text-base">Actions</div>
               </div>
 
-              {transactions
+              {filteredTransactions
                 .filter((transaction) => moment(transaction.date).format('YYYY-MM-DD') === day)
-                .sort((a, b) => moment(b.date).diff(moment(a.date))) // Sort transactions if needed
+                .sort((a, b) => moment(b.date).diff(moment(a.date)))
                 .map((transaction) => (
                   <div
                     key={transaction._id}
