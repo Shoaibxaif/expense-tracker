@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import moment from 'moment';
-import EditTransactionForm from './EditTransactionForm';
+import moment from "moment";
+import EditTransactionForm from "./EditTransactionForm";
 import NoDataMessage from "./NoDataMessage";
+
+const formatTime = (time) => {
+  const [hours, minutes] = time.split(":").map(Number);
+  const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+  const period = hours < 12 ? "AM" : "PM"; // Determine AM/PM
+  return `${formattedHours}:${minutes < 10 ? "0" : ""}${minutes} ${period}`;
+};
 
 const TransactionTable = ({ searchTerm, currentMonth }) => {
   const [transactions, setTransactions] = useState([]);
@@ -13,7 +20,9 @@ const TransactionTable = ({ searchTerm, currentMonth }) => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get("https://expense-tracker-backend-eac1.onrender.com/api/transactions");
+        const response = await axios.get(
+          "https://expense-tracker-backend-eac1.onrender.com/api/transactions"
+        );
         setTransactions(response.data);
       } catch (err) {
         setError(`Failed to fetch transactions: ${err.message}`);
@@ -22,17 +31,19 @@ const TransactionTable = ({ searchTerm, currentMonth }) => {
     };
 
     fetchTransactions();
-  }, [
-    transactions
-  ]);
+  }, [transactions]);
 
-  const filteredTransactions = transactions.filter((transaction) =>
-    transaction.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    moment(transaction.date).isSame(currentMonth, 'month')
+  const filteredTransactions = transactions.filter(
+    (transaction) =>
+      transaction.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      moment(transaction.date).isSame(currentMonth, "month")
   );
 
-  const dates = Array.from(new Set(filteredTransactions.map((t) => moment(t.date).format('YYYY-MM-DD'))))
-    .sort((a, b) => moment(b).diff(moment(a)));
+  const dates = Array.from(
+    new Set(
+      filteredTransactions.map((t) => moment(t.date).format("YYYY-MM-DD"))
+    )
+  ).sort((a, b) => moment(b).diff(moment(a)));
 
   const handleEdit = (transaction) => {
     setSelectedTransaction(transaction);
@@ -52,10 +63,13 @@ const TransactionTable = ({ searchTerm, currentMonth }) => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://expense-tracker-backend-eac1.onrender.com/api/transactions/${id}`);
-      setTransactions(transactions.filter((transaction) => transaction._id !== id));
+      await axios.delete(
+        `https://expense-tracker-backend-eac1.onrender.com/api/transactions/${id}`
+      );
+      setTransactions(
+        transactions.filter((transaction) => transaction._id !== id)
+      );
     } catch (err) {
-      setError("Failed to delete transaction");
       console.error(err);
     }
   };
@@ -71,7 +85,7 @@ const TransactionTable = ({ searchTerm, currentMonth }) => {
         />
       )}
       {dates.length === 0 ? (
-        <NoDataMessage/>
+        <NoDataMessage />
       ) : (
         dates.map((day) => (
           <div key={day} className="mb-6">
@@ -88,27 +102,38 @@ const TransactionTable = ({ searchTerm, currentMonth }) => {
               </div>
 
               {filteredTransactions
-                .filter((transaction) => moment(transaction.date).format('YYYY-MM-DD') === day)
+                .filter(
+                  (transaction) =>
+                    moment(transaction.date).format("YYYY-MM-DD") === day
+                )
                 .sort((a, b) => moment(b.date).diff(moment(a.date)))
                 .map((transaction) => (
                   <div
                     key={transaction._id}
                     className="grid grid-cols-5 gap-4 p-4 border-b border-gray-300 dark:border-gray-700"
                   >
-                    <div className="text-sm sm:text-base dark:text-gray-100">{transaction.time}</div>
-                    <div className="text-sm sm:text-base dark:text-gray-100">{transaction.title}</div>
-                    <div className="text-sm sm:text-base dark:text-gray-100">₹{transaction.amount}</div>
-                    <div className="text-sm sm:text-base dark:text-gray-100">{transaction.category}</div>
-                    <div className="text-sm sm:text-xs dark:text-gray-100">
+                    <div className="text-sm sm:text-base dark:text-gray-100">
+                      {formatTime(transaction.time)}
+                    </div>
+                    <div className="text-sm sm:text-base dark:text-gray-100">
+                      {transaction.title}
+                    </div>
+                    <div className="text-sm sm:text-base dark:text-gray-100">
+                      ₹{transaction.amount}
+                    </div>
+                    <div className="text-sm sm:text-base dark:text-gray-100">
+                      {transaction.category}
+                    </div>
+                    <div className="text-sm sm:text-xs dark:text-gray-100 flex flex-col sm:flex-row">
                       <span
                         onClick={() => handleEdit(transaction)}
-                        className="cursor-pointer text-blue-500 hover:underline"
+                        className="cursor-pointer text-blue-500 hover:underline mb-1 sm:mb-0 sm:mr-2"
                       >
                         Edit
                       </span>
                       <span
                         onClick={() => handleDelete(transaction._id)}
-                        className="cursor-pointer text-red-500 hover:underline ml-1 pr-1"
+                        className="cursor-pointer text-red-500 hover:underline"
                       >
                         Delete
                       </span>
