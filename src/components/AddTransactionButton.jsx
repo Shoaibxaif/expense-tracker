@@ -139,15 +139,7 @@ const AddTransactionButton = () => {
                   required
                 />
               </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 dark:text-gray-300 mb-2">Notes</label>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Notes"
-                  className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                ></textarea>
-              </div>
+             
               <div className="flex justify-end">
                 <button
                   type="button"
