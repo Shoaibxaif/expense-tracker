@@ -3,7 +3,7 @@ import axios from "axios";
 import moment from 'moment';
 import EditTransactionForm from './EditTransactionForm';
 
-const TransactionTable = ({ searchTerm }) => {
+const TransactionTable = ({ searchTerm, currentMonth }) => {
   const [transactions, setTransactions] = useState([]);
   const [error, setError] = useState("");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -26,7 +26,8 @@ const TransactionTable = ({ searchTerm }) => {
   ]);
 
   const filteredTransactions = transactions.filter((transaction) =>
-    transaction.title.toLowerCase().includes(searchTerm.toLowerCase())
+    transaction.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    moment(transaction.date).isSame(currentMonth, 'month')
   );
 
   const dates = Array.from(new Set(filteredTransactions.map((t) => moment(t.date).format('YYYY-MM-DD'))))
