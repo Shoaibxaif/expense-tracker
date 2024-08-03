@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import moment from 'moment';
 import EditTransactionForm from './EditTransactionForm';
+import NoDataMessage from "./NoDataMessage";
 
 const TransactionTable = ({ searchTerm, currentMonth }) => {
   const [transactions, setTransactions] = useState([]);
@@ -70,7 +71,7 @@ const TransactionTable = ({ searchTerm, currentMonth }) => {
         />
       )}
       {dates.length === 0 ? (
-        <p>No transactions found.</p>
+        <NoDataMessage/>
       ) : (
         dates.map((day) => (
           <div key={day} className="mb-6">
